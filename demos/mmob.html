@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="ASR_2017">
+
+    <title>กระหึ่มเพลเยอร์</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="netdna.bootstrapcdn.com/bootswatch/3.1.1/united/bootstrap.min.css">
+    <link rel="stylesheet" href="netdna.bootstrapcdn.com/bootswatch/3.1.1/flatly/bootstrap.min.css">
+    <link rel="stylesheet" href="netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/demo.css">
+  </head>
+
+  <body onload="myFunction()">
+
+    <div class="container">
+      <div class="navbar navbar-default" role="navigation">
+        <a class="navbar-brand" href="index-2.html">กระหึ่มเพลเยอร์</a>
+      </div>
+      <div class="text-center">
+        <div class="col-md-6 col-md-offset-3" style="margin-top: 30px">
+          <table style="width:100%">
+            <tr>
+              <td width="30%">
+                <strong>รายการคำสั่ง</strong>
+              </td>
+              <td width="60%">
+                <textarea id="trans" class="form-control" rows="1" style="background-color: white" ></textarea>
+              </td>
+              <td width="10%">
+                <select id="servers" name="servers" style="margin-top:.5em">
+                  <option value="ws://localhost:8080/client/ws/speech|ws://localhost:8080/client/ws/status" selected="selected">ไทย</option>
+                </select>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-6 col-md-offset-3" style="margin-top: 10px; margin-top: 60px;">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>ลำดับ</th>
+                <th>ชื่อเพลง</th>
+                <th>สถานะ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>ไกลแค่ไหนคือใกล้</td>
+                <td id="music1text">หยุด</td>
+                <audio id="mymusic1">
+                  <source src="media/music/music1.mp3" type="audio/mpeg">
+                </audio>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>คู่กัน</td>
+                <td id="music2text">หยุด</td>
+                <audio id="mymusic2">
+                  <source src="media/music/music2.mp3" type="audio/mpeg">
+                </audio>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>ชะตาชีวิต</td>
+                <td id="music3text">หยุด</td>
+                <audio id="mymusic3">
+                  <source src="media/music/music3.mp3" type="audio/mpeg">
+                </audio>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>กะทันหัน</td>
+                <td id="music4text">หยุด</td>
+                <audio id="mymusic4">
+                  <source src="media/music/music4.mp3" type="audio/mpeg">
+                </audio>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>ฝน</td>
+                <td id="music5text">หยุด</td>
+                <audio id="mymusic5">
+                  <source src="media/music/music5.mp3" type="audio/mpeg">
+                </audio>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+<span id="serverStatusBar" title="Number of available workers"></span>
+
+<div class="buttonsContainer">
+<span class="buttons">
+<button
+	id="buttonToggleListening"
+  accesskey="."
+	onclick="clearTranscription();toggleListening();"
+	>เริ่มคำสั่งเสียง</button>
+<button
+	id="buttonCancel"
+  accesskey="/"
+	disabled="disabled"
+	onclick="cancel();textaction();"
+  style="margin-left:20px;"
+	>ส่งคำสั่งเสียง</button>
+</span>
+</div>
+
+<pre id="log" style="display:none;">
+</pre>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="other/jquery-1.10.2.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <script src="../lib/dictate.js"></script>
+    <script src="../lib/recorder.js"></script>
+    <script src="mob.js"></script>
+
+    <script>
+    function myFunction() {
+       document.getElementById("servers").style.visibility = "hidden";
+    }
+   </script>
+
+<script>
+  function toggle(mymusic , status) {
+    var audio = document.getElementById(mymusic);
+    var stext = document.getElementById(status);
+    if (audio.paused) {
+      stext.innerHTML = "กำลังเล่น";
+      audio.play();
+    }
+    else{
+      stext.innerHTML = "หยุด";
+      audio.pause();
+    }
+  }
+
+  function mplay(mymusic , status) {
+    var audio = document.getElementById(mymusic);
+    var stext = document.getElementById(status);
+      stext.innerHTML = "กำลังเล่น";
+      audio.play();
+  }
+
+  function mpause(mymusic , status) {
+    var audio = document.getElementById(mymusic);
+    var stext = document.getElementById(status);
+      stext.innerHTML = "หยุด";
+      audio.pause();
+  }
+
+  function reset(mymusic, status){
+    var audio = document.getElementById(mymusic);
+    var stext = document.getElementById(status);
+    stext.innerHTML = "หยุด";
+    audio.currentTime = 0;
+    audio.pause();
+  }
+
+  function textaction(){
+    var order = document.getElementById("trans").value;
+
+    order = order.replace(".", "");
+    var mtextSplit = order.split(" ");
+
+    var trainOrder = [["เล่น", "เพลง", "ไกลแค่ไหนคือใกล้"],
+                      ["เล่น", "ไกลแค่ไหนคือใกล้"],
+                      ["เล่น", "เพลง", "คู่กัน"],
+                      ["เล่น", "คู่กัน"],
+                      ["เล่น", "เพลง", "ชะตาชีวิต"],
+                      ["เล่น", "ชะตาชีวิต"],
+                      ["เล่น", "เพลง", "กะทันหัน"],
+                      ["เล่น", "กะทันหัน"],
+                      ["เล่น", "เพลงฝน"],
+                      ["เล่น", "ฝน"],
+                      ["หยุด", "เล่น", "เพลง", "ไกลแค่ไหนคือใกล้"],
+                      ["หยุด", "เพลง", "ไกลแค่ไหนคือใกล้"],
+                      ["หยุด", "เล่น", "เพลง", "คู่กัน"],
+                      ["หยุด", "เพลง", "คู่กัน"],
+                      ["หยุด", "เล่น", "เพลง", "ชะตาชีวิต"],
+                      ["หยุด", "เพลง", "ชะตาชีวิต"],
+                      ["หยุด", "เล่น", "เพลง", "กะทันหัน"],
+                      ["หยุด", "เพลง", "กะทันหัน"],
+                      ["หยุด", "เล่น", "เพลง", "ฝน"],
+                      ["หยุด", "เพลง", "ฝน"],
+                      ["หยุด", "เล่น"],
+                      ["หยุด"],
+                      ["เปลี่ยน", "เพลง"]];
+
+    var indexOrder = new Array();
+    var startOrder = new Array();
+    var mtext = "";
+    var startMtext = 10000;
+    for (var i = 0; i < trainOrder.length; i++) {
+      indexOrder.push(0);
+      startOrder.push(0);
+    }
+
+    for (var i = 0; i < mtextSplit.length; i++) {
+      for (var j = 0; j < trainOrder.length; j++) {
+        if (trainOrder[j][indexOrder[j]] == mtextSplit[i]) {
+          indexOrder[j]++;
+          if (indexOrder[j] == 1)
+            startOrder[j] = i;
+        }
+
+        if (indexOrder[j] == trainOrder[j].length
+            && startOrder[j] <= startMtext) {
+          mtext = "";
+          startMtext = startOrder[j];
+          for (var k = 0; k < trainOrder[j].length; k++) {
+            mtext += trainOrder[j][k];
+          }
+          indexOrder[j]++;
+        }
+      }
+    }
+
+    if(mtext == "เล่นเพลงไกลแค่ไหนคือใกล้" || mtext == "เล่นไกลแค่ไหนคือใกล้"){
+      mplay('mymusic1','music1text');
+    }
+    else if(mtext == "เล่นเพลงคู่กัน" || mtext == "เล่นคู่กัน"){
+      mplay('mymusic2','music2text');
+    }
+    else if(mtext == "เล่นเพลงชะตาชีวิต" || mtext == "เล่นชะตาชีวิต"){
+      mplay('mymusic3','music3text');
+    }
+    else if(mtext == "เล่นเพลงกะทันหัน" || mtext == "เล่นกะทันหัน"){
+      mplay('mymusic4','music4text');
+    }
+    else if(mtext == "เล่นเพลงฝน" || mtext == "เล่นฝน"){
+      mplay('mymusic5','music5text');
+    }
+
+    else if(mtext == "หยุดเล่นเพลงไกลแค่ไหนคือใกล้" || mtext == "หยุดเพลงไกลแค่ไหนคือใกล้" ){
+      reset('mymusic1','music1text');
+    }
+    else if(mtext == "หยุดเล่นเพลงคู่กัน" || mtext == "หยุดเพลงคู่กัน" ){
+      reset('mymusic2','music2text');
+    }
+    else if(mtext == "หยุดเล่นเพลงชะตาชีวิต" || mtext == "หยุดเพลงชะตาชีวิต" ){
+      reset('mymusic3','music3text');
+    }
+    else if(mtext == "หยุดเล่นเพลงกะทันหัน" || mtext == "หยุดเพลงกะทันหัน" ){
+      reset('mymusic4','music4text');
+    }
+    else if(mtext == "หยุดเล่นเพลงฝน" || mtext == "หยุดเพลงฝน" ){
+      reset('mymusic5','music5text');
+    }
+
+    else if(mtext == "หยุดเล่น" || mtext == "หยุด" ){
+      reset('mymusic1','music1text');
+      reset('mymusic2','music2text');
+      reset('mymusic3','music3text');
+      reset('mymusic4','music4text');
+      reset('mymusic5','music5text');
+    }
+    else if(mtext == "เปลี่ยนเพลง" ){
+      var i;
+      for(i=1;i<=5;i++){
+        var temp = 'mymusic'.concat(i);
+        var temp2 = ('music'.concat(i).concat('text'));
+        var mobject = document.getElementById(temp);
+          if(!mobject.paused){
+            reset(temp,temp2);
+            if(!(temp == "mymusic5")){
+              var temp3 = 'mymusic'.concat(i+1);
+              var temp4 = ('music'.concat(i+1).concat('text'));
+              mplay(temp3,temp4);
+            }
+            else{
+              mplay('mymusic1','music1text');
+            }
+            break;
+          }
+      }
+    }
+  }
+
+</script>
+
+  </body>
+</html>
